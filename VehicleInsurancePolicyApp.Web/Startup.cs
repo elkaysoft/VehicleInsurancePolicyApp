@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-//using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-//using VehicleInsurancePolicyApp.Core;
+using VehicleInsurancePolicyApp.Core;
+using VehicleInsurancePolicyApp.Core.Logics;
+using VehicleInsurancePolicyApp.Core.Models;
 
 namespace VehicleInsurancePolicyApp.Web
 {
@@ -26,7 +26,8 @@ namespace VehicleInsurancePolicyApp.Web
         {
             services.AddControllersWithViews();
 
-            //services.AddDbContext<AppDbContext>(p => p.use);
+            services.AddDbContext<AppDbContext>(p => p.UseInMemoryDatabase(databaseName: "InsurancePolicyApp"));
+            //SetVehicleInformation()
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,6 +41,11 @@ namespace VehicleInsurancePolicyApp.Web
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            var context = app.ApplicationServices.GetService<AppDbContext>();
+            SetVehicleInformation(context);
+            SetPolicyPrice(context);
+
             app.UseStaticFiles();
 
             app.UseRouting();
@@ -53,5 +59,103 @@ namespace VehicleInsurancePolicyApp.Web
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
+
+
+        private static void SetVehicleInformation(AppDbContext context)
+        {
+            var vehicleDetails = new List<VehiclesInfo>();
+
+            vehicleDetails.Add(new VehiclesInfo
+            {
+                Id = 1,
+                IsDeleted = false,
+                SubmittedBy = "admin",
+                SubmittedOn = DateTime.Now,
+                VehicleMake = "Toyota",
+                VehicleModel = "Corolla"
+            });
+
+            vehicleDetails.Add(new VehiclesInfo
+            {
+                Id = 2,
+                IsDeleted = false,
+                SubmittedBy = "admin",
+                SubmittedOn = DateTime.Now,
+                VehicleMake = "Toyota",
+                VehicleModel = "Camry"
+            });
+
+            vehicleDetails.Add(new VehiclesInfo
+            {
+                Id = 3,
+                IsDeleted = false,
+                SubmittedBy = "admin",
+                SubmittedOn = DateTime.Now,
+                VehicleMake = "Honda",
+                VehicleModel = "Accord"
+            });
+
+            vehicleDetails.Add(new VehiclesInfo
+            {
+                Id = 1,
+                IsDeleted = false,
+                SubmittedBy = "admin",
+                SubmittedOn = DateTime.Now,
+                VehicleMake = "Honda",
+                VehicleModel = "Civic"
+            });
+
+            context.VehiclesInfos.AddRange(vehicleDetails);
+            context.SaveChanges();
+        }
+
+        private static void SetPolicyPrice(AppDbContext context)
+        {
+            var policyPrices = new List<PolicyPrices>();
+
+            policyPrices.Add(new PolicyPrices
+            {
+                Id = 1,
+                IsDeleted = false,
+                SubmittedBy = "admin",
+                SubmittedOn = DateTime.Now,
+                BodyType = "Car",
+                Amount = 5000
+            });
+
+            policyPrices.Add(new PolicyPrices
+            {
+                Id = 2,
+                IsDeleted = false,
+                SubmittedBy = "admin",
+                SubmittedOn = DateTime.Now,
+                BodyType = "SUV",
+                Amount = 5000
+            });
+
+            policyPrices.Add(new PolicyPrices
+            {
+                Id = 1,
+                IsDeleted = false,
+                SubmittedBy = "admin",
+                SubmittedOn = DateTime.Now,
+                BodyType = "Truck",
+                Amount = 7500
+            });
+
+            policyPrices.Add(new PolicyPrices
+            {
+                Id = 1,
+                IsDeleted = false,
+                SubmittedBy = "admin",
+                SubmittedOn = DateTime.Now,
+                BodyType = "Van",
+                Amount = 5000
+            });
+
+            context.PolicyPrices.AddRange(policyPrices);
+            context.SaveChanges();
+        }
+
     }
 }
