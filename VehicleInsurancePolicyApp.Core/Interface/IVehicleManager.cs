@@ -7,8 +7,9 @@ using VehicleInsurancePolicyApp.Core.DTO;
 
 namespace VehicleInsurancePolicyApp.Core.Interface
 {
-    public interface IPolicyManager
+    public interface IVehicleManager
     {
-        ResponseMgr<List<GetPolicyDto>> GetInsurancePolicies();
+        ResponseMgr<List<GetVehicleDto>> GetVehicleDetails();
+        ResponseMgr<List<GetVehicleDto>> GetVehicleModelByMake(string maker);
     }
 }

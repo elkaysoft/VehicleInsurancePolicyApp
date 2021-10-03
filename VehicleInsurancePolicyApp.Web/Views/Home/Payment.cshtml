@@ -1,0 +1,195 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Policy Payment</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/jquery.datetimepicker.css" />
+    <link rel="stylesheet" href="~/css/custom.css" />
+    <link rel="stylesheet" href="~/css/bootstrap-datetimepicker.min.css" />
+    <link rel="stylesheet" href="~/css/toastr.min.css" />
+
+</head>
+<body>
+    <div class="container main">
+        <div class="row">
+            <div class="col-md-6">
+                <img src="~/images/vipolicy.jpg" width="600" style="margin-top:100px" height="400" class="img-fluid" />
+            </div>
+            <div class="col-md-6">
+                <form id="paymentForm">
+                    <h3>Vehicle Third-Party Policy Payment</h3>
+
+                    <h4>Basic Information</h4>
+                    <hr />
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" class="form-control" name="firstName" required />
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" class="form-control" name="lastName" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="text" class="form-control" name="email" required />
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="text" class="form-control" name="phoneNumber" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Date of Birth</label>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <button type="button" class="input-group-text toggle1">
+                                            <i class="fa fa-calendar-alt"></i>
+                                        </button>
+                                    </div>
+                                    <input type="text" id="picker1" class="form-control" name="dob" required />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4>Vehicle Information</h4>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Vehicle Make</label>
+                                <select id="drpVehicleMake" class="form-control"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Vehicle Model</label>
+                                <select id="drpVehicleModel" class="form-control"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Registration No</label>
+                                <input type="text" class="form-control" name="registrationNo" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Body Type</label>
+                                <select id="drpBodyType" class="form-control"></select>
+                                <span style="color:red" id="ctAmount">&#8358; <span id="spAmount"></span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-sm btn-info" data-toggle='modal' id="btnProceed" data-target="#paymentCardModal" disabled>Proceed to payment</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <!--Debit Card Modal Starts here-->
+    <div class="modal fade" id="paymentCardModal" tabindex="-1" role="dialog" aria-labelledby="addUserLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>Card Details</p>
+                    <form id="frmCardDetails">
+                        <div class="form-group">
+                            <input class="form-control" placeholder="Card Number" required />
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control" placeholder="Card Holder Name" required />
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control" placeholder="Expiry Date" required />
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control" placeholder="CVV" required />
+                        </div>
+                        <br />
+                        <button type="button" class="btn btn-success" id="btnSubmit">Submit</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Debit Card Modal Ends here-->
+
+
+    <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/js/custom.js"></script>
+    <script type="text/javascript" src="~/js/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="~/js/popper.min.js"></script>
+    <script type="text/javascript" src="~/js/moment.min.js"></script>
+    <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js"></script>
+    <script type="text/javascript" src="~/js/toastr.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var $vehicleDetailUrl = '@Url.Action("GetVehicleListings", "servicebox")';
+            var $vehicleModelUrl = '@Url.Action("GetVehicleModelsByMake", "servicebox")';
+            var $vehiclePolicyUrl = '@Url.Action("GetPremiumPolicy", "servicebox")';
+            var $redirectUrl = '@Url.Action("Payment", "Home")';
+
+            GetVehicleMake($vehicleDetailUrl);
+            getVehicleModelByMake($vehicleModelUrl);
+            GetInsurancePolicy($vehiclePolicyUrl);
+
+            $('#picker1').datetimepicker({
+                timepicker: false,
+                datepicker: true,
+                format: 'Y-m-d'
+            });
+
+            $('.toggle1').on('click', function (e) {
+                $('#picker1').datetimepicker('toggle');
+            });
+
+            $('#btnProceed').click(function (e) {
+                e.preventDefault();
+                $('#paymentCardModal').appendTo('body');
+            });
+
+            $('#btnSubmit').click(function (e) {
+                e.preventDefault();
+                toastr.info('Payment completed Successfully!');
+                setTimeout(function () {
+                    window.location.href = $redirectUrl;
+                }, 1500);
+            });
+
+        });
+    </script>
+</body>
+</html>

@@ -7,7 +7,8 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using VehicleInsurancePolicyApp.Core;
-using VehicleInsurancePolicyApp.Core.Logics;
+using VehicleInsurancePolicyApp.Core.Interface;
+using VehicleInsurancePolicyApp.Core.Managers;
 using VehicleInsurancePolicyApp.Core.Models;
 
 namespace VehicleInsurancePolicyApp.Web
@@ -27,7 +28,9 @@ namespace VehicleInsurancePolicyApp.Web
             services.AddControllersWithViews();
 
             services.AddDbContext<AppDbContext>(p => p.UseInMemoryDatabase(databaseName: "InsurancePolicyApp"));
-            //SetVehicleInformation()
+
+            services.AddScoped<IPolicyManager, PolicyManager>();
+            services.AddScoped<IVehicleManager, VehicleManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,7 +45,8 @@ namespace VehicleInsurancePolicyApp.Web
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            var context = app.ApplicationServices.GetService<AppDbContext>();
+            var scope = app.ApplicationServices.CreateScope();
+            var context = scope.ServiceProvider.GetService<AppDbContext>();
             SetVehicleInformation(context);
             SetPolicyPrice(context);
 
@@ -56,7 +60,7 @@ namespace VehicleInsurancePolicyApp.Web
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Payment}/{id?}");
             });
         }
 
@@ -97,7 +101,7 @@ namespace VehicleInsurancePolicyApp.Web
 
             vehicleDetails.Add(new VehiclesInfo
             {
-                Id = 1,
+                Id = 4,
                 IsDeleted = false,
                 SubmittedBy = "admin",
                 SubmittedOn = DateTime.Now,
@@ -135,7 +139,7 @@ namespace VehicleInsurancePolicyApp.Web
 
             policyPrices.Add(new PolicyPrices
             {
-                Id = 1,
+                Id = 3,
                 IsDeleted = false,
                 SubmittedBy = "admin",
                 SubmittedOn = DateTime.Now,
@@ -145,7 +149,7 @@ namespace VehicleInsurancePolicyApp.Web
 
             policyPrices.Add(new PolicyPrices
             {
-                Id = 1,
+                Id = 4,
                 IsDeleted = false,
                 SubmittedBy = "admin",
                 SubmittedOn = DateTime.Now,
